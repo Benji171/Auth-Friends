@@ -1,28 +1,29 @@
-import React, {useState, useEffect} from 'react';
-import {axiosWithAuth} from "../authorization/axiosWithAuth.js";
-import Friend from "./Friend.js";
+  
+import React, { useContext } from "react";
+import { axiosWithAuth } from "../utils/axiosWithAuth";
+import { FriendContext } from "../context/FriendContext";
 
-function Friends() {
-
-    const [friends, setFriends] = useState([]);
-
-    useEffect(() => {
+const Friends = (props) => {
+    const {friend, setFriend} = useContext(FriendContext)
+    
+    const handleDelete = id => {
         axiosWithAuth()
-        .get("/api/friends")
-        .then(res => setFriends(res.data))
-        .catch(err => alert("Error getting friends list! \n" + err));
-    }, [])
-
+        .delete(`friends/${id}`)
+        .then(response => setFriend(friend.filter(friend => friend.id !== id)))
+        .catch(err => console.log("Error", err))
+    };
   return (
-      <div>
-          <h1>These are your friends:</h1>
-          <ul>
-              {friends.map((friend) => {
-                  return (<Friend key={friend.id} friend={friend}></Friend>)
-              })}
-          </ul>
+    <div className="card">
+      <div className="row">
+        <div className="column">
+          <p>{props.friend.name}</p>
+          <p>{props.friend.age}</p>
+          <p>{props.friend.email}</p>
+      <button onClick={() => handleDelete(props.friend.id)}>Delete this friend!</button>
+        </div>
       </div>
+    </div>
   );
-}
+};
 
 export default Friends;

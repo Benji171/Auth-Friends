@@ -1,35 +1,19 @@
 import React from 'react';
-import logo from './logo.svg';
-import { BrowserRouter as Router, Route, Switch, Link } from 'react-router-dom'
-import Login from './components/Login'
-import Friends from './components/Friends'
-import CreateFriend from './components/CreateFriend'
+import {Link, Route} from "react-router-dom"
 import './App.css';
-import PrivateRoute from "./authorization/PrivateRoute.js"
-import UpdateFriend from './components/UpdateFriend';
-
+import Login from "./components/Login"
+import Friends from './components/Friends';
+import PrivateRoute from "./components/PrivateRoute"
 function App() {
   return (
-    <Router>
-      <div>
-        <ul>
-          <li>
-            <Link to="/login">Login</Link>
-          </li>
-          <li>
-            <Link to="/friends">Friends</Link>
-          </li>
-          <li>
-            <Link to="/newfriend">Create a New Friend</Link>
-          </li>
-        </ul>
-        <Route path="/login" component={Login} />
-        <PrivateRoute exact path='/' component={Friends} />{/* Friends is the homepage, if not logged in, we'll get redirect to Login */}
-        <PrivateRoute path='/newfriend' component={CreateFriend} />
-        <PrivateRoute path='/updatefriend' component={UpdateFriend} />
-
-      </div>
-    </Router>
+    <div className="App">
+      
+      <Link to= "/">Home </Link>
+      <Link to= "/login">Login </Link>
+      <Route exact path="/protected" component={Friends}/>
+      
+      <Route exact path="/login" component={Login}/>
+    </div>
   );
 }
 
