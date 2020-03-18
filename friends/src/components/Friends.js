@@ -1,29 +1,45 @@
-  
-import React, { useContext } from "react";
+import React, { useState, useEffect } from "react";
+// import moment from "moment";
 import { axiosWithAuth } from "../utils/axiosWithAuth";
-import { FriendContext } from "../context/FriendContext";
+import Friend from "./Friend";
+import AddAFriendForm from "./AddAFriendForm";
+function Friends() {
+  const [friends, setFriends] = useState([]);
 
-const Friends = (props) => {
-    const {friend, setFriend} = useContext(FriendContext)
-    
-    const handleDelete = id => {
-        axiosWithAuth()
-        .delete(`friends/${id}`)
-        .then(response => setFriend(friend.filter(friend => friend.id !== id)))
-        .catch(err => console.log("Error", err))
-    };
+  useEffect(() => {
+    axiosWithAuth()
+      .get("/api/friends")
+      .then(res => setFriends(res.data))
+      .catch(err => alert("Error getting friends list! \n" + err));
+  }, []);
+
+  function getData() {
+    axiosWithAuth()
+      .get("/api/friends")
+      .then(res => setFriends(res.data))
+      .catch(err => alert("Error getting friends list! \n" + err));
+  }
+
+  function addFriend(friend) {
+    axiosWithAuth()
+      .post("/api/friends", friend)
+      .then(res => {
+        getData();
+        console.log(res);
+      });
+  }
+
   return (
-    <div className="card">
-      <div className="row">
-        <div className="column">
-          <p>{props.friend.name}</p>
-          <p>{props.friend.age}</p>
-          <p>{props.friend.email}</p>
-      <button onClick={() => handleDelete(props.friend.id)}>Delete this friend!</button>
-        </div>
+    <div>
+      <h1>Say Hi to all of your Friends!</h1>
+      <div className="friends">
+        {friends.map(friend => {
+          return <Friend key={friend.id} friend={friend} />;
+        })}
       </div>
+      <AddAFriendForm addFriend={addFriend} />
     </div>
   );
-};
+}
 
 export default Friends;

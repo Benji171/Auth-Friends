@@ -1,5 +1,6 @@
 import React from "react";
-import axios from 'axios'
+import { axiosWithAuth } from "../utils/axiosWithAuth";
+
 class Login extends React.Component {
   state = {
     credentials: {
@@ -7,45 +8,46 @@ class Login extends React.Component {
       password: ""
     }
   };
-  handleChange = e => {
-      this.setState({
-          credentials: {
-              ...this.state.credentials,
-              [e.target.name]: e.target.value
-          }
-      });
+
+  handleChange = event => {
+    this.setState({
+      credentials: {
+        ...this.state.credentials,
+        [event.target.name]: event.target.value
+      }
+    });
   };
-  login = e => {
-    e.preventDefault();
-  
-    axios
-      .post('http://localhost:5000/api/login', this.state.credentials)
+
+  login = event => {
+    event.preventDefault();
+    axiosWithAuth()
+      .post("/api/login", this.state.credentials)
       .then(res => {
-        localStorage.setItem('token', res.data.payload); //returned token to local storage...
-        this.props.history.push('/protected');
+        window.localStorage.setItem("token", res.data.payload);
+        this.props.history.push("/friends");
       })
       .catch(err => console.log(err));
   };
 
-render() {
+  render() {
     return (
-      <div>
-          <h1>Sign In</h1>
+      <div className="login">
         <form onSubmit={this.login}>
-         Username: <input 
-          type='text'
-          name='username'
-          value={this.state.credentials.username}
-          onChange={this.handleChange}
-
+          <input
+            type="text"
+            name="username"
+            placeholder="username"
+            value={this.state.credentials.username}
+            onChange={this.handleChange}
           />
-         Password:  <input 
-          type='text'
-          name='password'
-          value={this.state.credentials.password}
-          onChange={this.handleChange}
+          <input
+            type="password"
+            name="password"
+            placeholder="password"
+            value={this.state.credentials.password}
+            onChange={this.handleChange}
           />
-          <button>Log In</button>
+          <button className="button">Login</button>
         </form>
       </div>
     );
